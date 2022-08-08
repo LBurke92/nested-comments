@@ -6,7 +6,7 @@ export function PostList() {
     const {loading, error, value: posts} = useAsync(getPosts);
 
     if (loading) return <h1>Loading</h1>;
-    if (error) return <h1 class="error-msg">{error}</h1>;
+    if (error) return <h1 className="error-msg">{error}</h1>;
 
     return posts.map(post => {
         return (
