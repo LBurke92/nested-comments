@@ -25,23 +25,35 @@ app.get(
         const posts = await prisma.post.findMany({
             select: {id: true, title: true},
         });
-
-        // try {
-        //     const posts = await prisma.post.findMany({
-        //         select: {id: true, title: true},
-        //     });
-        //     res.send(posts);
-        // } catch (err) {
-        //     console.log(err);
-        //     next(err);
-        // }
-
         res.send(posts);
     }
 );
-
-async function commitToDb(promise) {
-    app.to;
-}
+app.get(
+    '/posts/:id',
+    cors({
+        origin: process.env.CLIENT_URL,
+        credentials: true,
+    }),
+    async (req, res, next) => {
+        const posts = await prisma.post.findUnique({
+            where: {id: req.params.id},
+            select: {
+                body: true,
+                title: true,
+                comments: {
+                    orderBy: {createdAt: 'desc'},
+                    select: {
+                        id: true,
+                        message: true,
+                        parentId: true,
+                        createdAt: true,
+                        user: {select: {id: true, name: true}},
+                    },
+                },
+            },
+        });
+        res.send(posts);
+    }
+);
 
 app.listen({port: process.env.PORT});
